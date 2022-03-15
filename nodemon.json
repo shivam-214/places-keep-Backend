@@ -2,7 +2,7 @@
   "env": {
     "DB_USER": "shivam-214",
     "DB_PASSWORD": "shivam9773661707",
-    "DB_NAME": "PlacesKeepDB",
+    "DB_NAME": "PlacesKeepProduction",
     "JWT_KEY": "Kaun_hai_be_tu",
     "MAPBOX_APIKEY": "pk.eyJ1Ijoic2hpdmFtLTIxNCIsImEiOiJjbDA0eXN1anMwanI4M2Nxd2U4cmthaTdmIn0.dG_tl0WkmBFP3K32TlEr5A"
   }
