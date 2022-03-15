@@ -18,6 +18,6 @@ router.post(
   ],
   userController.signup
 );
-router.post("/login", userController.login);
+router.post("/login", [check("email").normalizeEmail()], userController.login);
 
 module.exports = router;
