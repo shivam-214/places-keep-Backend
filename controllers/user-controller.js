@@ -1,3 +1,4 @@
+const cloudinary = require("../util/cloudinary");
 const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
@@ -59,11 +60,21 @@ const signup = async (req, res, next) => {
     );
   }
 
+  let response;
+  try {
+    response = await cloudinary.uploader.upload(req.file.path,{
+      folder: "users",
+    });
+  } catch (err) {
+    return next(err);
+  }
+
   const createdUser = new User({
     name,
     email,
     password: hashedPassword,
-    image: req.file.path,
+    imageUrl: response.secure_url,
+    imagePublicId: response.public_id,
     places: [],
   });
 

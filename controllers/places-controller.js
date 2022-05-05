@@ -1,4 +1,4 @@
-const fs = require("fs");
+const cloudinary = require("../util/cloudinary");
 
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
@@ -74,21 +74,32 @@ const createPlace = async (req, res, next) => {
 
   const { title, description, address, lng, lat } = req.body;
 
+  let response;
+  try {
+    response = await cloudinary.uploader.upload(req.file.path, {
+      folder: "places",
+    });
+  } catch (err) {
+    return next(err);
+  }
+
+  const creator = req.userData.userId;
   const createdPlace = new Place({
     title,
     description,
     address,
+    imageUrl: response.secure_url,
+    imagePublicId: response.public_id,
     location: {
       lng: lng,
       lat: lat,
     },
-    image: req.file.path,
-    creator: req.userData.userId,
+    creator
   });
 
   let user;
   try {
-    user = await User.findById(req.userData.userId);
+    user = await User.findById(creator);
   } catch (err) {
     const error = new httpError(
       "Creating place failed, please try again.",
@@ -194,7 +205,14 @@ const deletePlace = async (req, res, next) => {
     return next(error);
   }
 
-  const imagePath = place.image;
+  try {
+    await cloudinary.uploader.destroy(place.imagePublicId);
+  } catch (err) {
+    return next(err);
+  }
+
+  // const imagePath = place.image;
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -210,9 +228,9 @@ const deletePlace = async (req, res, next) => {
     return next(error);
   }
 
-  fs.unlink(imagePath, (err) => {
-    console.log(err);
-  });
+  // fs.unlink(imagePath, (err) => {
+  //   console.log(err);
+  // });
   res.status(200).json({ message: "Place deleted." });
 };
 

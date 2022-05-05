@@ -32,11 +32,11 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
-  if (req.file) {
-    fs.unlink(req.file.path, (err) => {
-      console.log(err);
-    });
-  }
+  // if (req.file) {
+  //   fs.unlink(req.file.path, (err) => {
+  //     console.log(err);
+  //   });
+  // }
   if (res.headerSent) {
     return next(error);
   }
@@ -50,6 +50,7 @@ mongoose
   )
   .then(() => {
     app.listen(process.env.PORT || 5000);
+    console.log("DB CONNECTED");
   })
   .catch((err) => {
     console.log(err);
